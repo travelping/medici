@@ -1,18 +1,18 @@
 APP_NAME="medici"
-VSN="0.5"
+ERL=erl
+REBAR=./rebar
+VSN="0.6"
 
 all: compile
 
 docs: 
-	erl -noshell -run edoc_run application "'$(APP_NAME)'" '"."' '$(VSN)'
+	$(ERL) -noshell -run edoc_run application "'$(APP_NAME)'" '"."' '$(VSN)'
 
 compile: clean
-	erlc -o ebin/ src/*.erl
-	cp src/*.app ebin/
+	@$(REBAR) compile
 
 clean:
-	rm -rfv ebin/
-	mkdir ebin
+	@$(REBAR) clean
 
 # Testing with a Tokyo Tyrant server instance
 #test:	clean ttclean tt_normal testbuild run_basic_test tt_table run_table_test tt_normal run_medici_test ttstopd ttclean
