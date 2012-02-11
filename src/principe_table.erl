@@ -392,13 +392,12 @@ query_add_condition(_Sock, Query, ColName, Op, ExprList) when is_list(ExprList) 
        convert_query_exprlist(ExprList)]
      } | Query].
 
-%% @spec query_limit(Socket::port(),
-%%                   Query::proplist(),
+%% @spec query_limit(Query::proplist(),
 %%                   Max::integer(),
 %%                   Skip::integer()) -> proplist()
 %%
 %% @doc Set a limit on the number of returned values for Query, skip the first Skip records.
-query_limit(_Sock, Query, Max, Skip) when is_integer(Max), Max > 0, is_integer(Skip), Skip >= 0 ->
+query_limit(Query, Max, Skip) when is_integer(Max), Max > 0, is_integer(Skip), Skip >= 0 ->
     LimitKey = {set_limit, Max, Skip},
     LimitValue = ["setlimit", 
 		?NULL, 
@@ -412,23 +411,21 @@ query_limit(_Sock, Query, Max, Skip) when is_integer(Max), Max > 0, is_integer(S
 	    [{LimitKey, LimitValue} | proplists:delete(ExistingKey, Query)]
     end.
 
-%% @spec query_limit(Socket::port(),
-%%                   Query::proplist(),
+%% @spec query_limit(Query::proplist(),
 %%                   Max::integer()) -> proplist()
 %%
 %% @doc Set a limit on the number of returned values for Query.
 %%
 %% XXX: should the missing skip be 0 or -1 (protocol ref and perl versions seem to disagree)
-query_limit(_Sock, Query, Max) ->
+query_limit(Query, Max) ->
     query_limit(_Sock, Query, Max, 0).
 
-%% @spec query_order(Socket::port(),
-%%                   Query::proplist(),
+%% @spec query_order(Query::proplist(),
 %%                   ColName::index_col(),
 %%                   Type::order_type()) -> proplist()
 %%
 %% @doc Set the order for returned values in Query.
-query_order(_Sock, Query, primary, Type) when is_atom(Type) ->
+query_order(Query, primary, Type) when is_atom(Type) ->
     OrderKey = {set_order, primary, Type},
     OrderValue = ["setorder", 
 		  ?NULL, 
@@ -441,7 +438,7 @@ query_order(_Sock, Query, primary, Type) when is_atom(Type) ->
 	{value, ExistingKey} ->
 	    [{OrderKey, OrderValue} | proplists:delete(ExistingKey, Query)]
     end;
-query_order(_Sock, Query, ColName, Type) when is_atom(Type) ->
+query_order(Query, ColName, Type) when is_atom(Type) ->
     OrderKey = {set_order, ColName, Type},
     OrderValue = ["setorder", 
 		  ?NULL, 
