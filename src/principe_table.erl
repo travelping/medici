@@ -23,8 +23,8 @@
 -export([connect/0, connect/1, put/3, putkeep/3, putcat/3, update/3, out/2,
 	 get/2, mget/2, vsiz/2, iterinit/1, iternext/1, fwmkeys/3, sync/1, optimize/2,
 	 vanish/1, rnum/1, size/1, stat/1, copy/2, restore/3, addint/3, adddouble/3, 
-	 adddouble/4, setmst/3, setindex/3, query_limit/3, query_limit/4, query_add_condition/5,
-	 query_order/4, search/2, genuid/1, searchcount/2, searchout/2]).
+	 adddouble/4, setmst/3, setindex/3, query_limit/2, query_limit/3, query_add_condition/4,
+	 query_order/3, search/2, genuid/1, searchcount/2, searchout/2]).
 
 -include("principe.hrl").
 
@@ -367,8 +367,7 @@ genuid(Socket) ->
 	    Error
     end.
 
-%% @spec query_add_condition(Socket::port(),
-%%                           Query::proplist(),
+%% @spec query_add_condition(Query::proplist(),
 %%                           ColName::iolist(),
 %%                           Op::query_opcode(),
 %%                           ExprList::query_expr()) -> proplist()
@@ -381,7 +380,7 @@ genuid(Socket) ->
 %% the last atom is no_index an existing index on the remote database server will
 %% be bypassed.
 %% @end
-query_add_condition(_Sock, Query, ColName, Op, ExprList) when is_list(ExprList) ->
+query_add_condition(Query, ColName, Op, ExprList) when is_list(ExprList) ->
     [{{add_cond, ColName, Op, ExprList}, 
       ["addcond", 
        ?NULL, 
@@ -418,7 +417,7 @@ query_limit(Query, Max, Skip) when is_integer(Max), Max > 0, is_integer(Skip), S
 %%
 %% XXX: should the missing skip be 0 or -1 (protocol ref and perl versions seem to disagree)
 query_limit(Query, Max) ->
-    query_limit(_Sock, Query, Max, 0).
+    query_limit(Query, Max, 0).
 
 %% @spec query_order(Query::proplist(),
 %%                   ColName::index_col(),
