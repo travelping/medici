@@ -1,0 +1,8 @@
+erl_crash.dump
+*.beam
+*.log
+/ebin
+/log
+/tetrapak/.*.cache
+/dist/
+*~
